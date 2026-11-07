@@ -2,11 +2,15 @@ services:
   web:
     build: .
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     env_file: .env
     volumes:
       - guests:/data
+    networks:
+      - caddy
 
 volumes:
   guests:
+
+networks:
+  caddy:
+    external: true
