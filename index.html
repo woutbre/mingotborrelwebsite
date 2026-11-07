@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VrijMignotBo #1 – Housewarming</title>
+<meta name="description" content="casa di wout & kars presents: housewarming in vrijmibo stijl. vrijdag 4 december, 17:00.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="VrijMignotBo #1 – Housewarming">
+<meta property="og:description" content="casa di wout & kars presents: housewarming in vrijmibo stijl. vrijdag 4 december, 17:00.">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#f6f4f0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f4f0;
+  --ink: #2b2b2d;
+  --muted: #84817a;
+  --ember: #b8431f;
+  --glow: rgba(214, 96, 40, 0.14);
+  --font: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1f1f21; --ink: #ece9e3; --muted: #99958d; --ember: #e07a4a; --glow: rgba(214, 96, 40, 0.2);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1f1f21; --ink: #ece9e3; --muted: #99958d; --ember: #e07a4a; --glow: rgba(214, 96, 40, 0.2);
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font); font-size: 1rem; line-height: 1.5; font-weight: 400;
+  -webkit-font-smoothing: antialiased; position: relative; overflow-x: hidden; text-transform: lowercase;
+}
+
+/* Background: a faint warmth at the floor and a few embers drifting up */
+.warmth {
+  position: fixed; inset: auto 0 0 0; height: 45vh; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse 60% 100% at 50% 130%, var(--glow), transparent 70%);
+}
+
+#fireCanvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.sound { position: fixed; z-index: 3; top: max(1rem, env(safe-area-inset-top, 0px)); right: 1.25rem; background: none; border: 0; padding: 0.25rem 0; cursor: pointer; font: inherit; font-size: 0.8rem; color: var(--muted); text-transform: lowercase; transition: color .2s; }
+.sound:hover, .sound:focus-visible { color: var(--ink); }
+
+/* RSVP */
+[hidden] { display: none !important; }
+.rsvp { display: flex; gap: 0.75rem; }
+.btn { position: relative; z-index: 2; font: inherit; font-size: 0.95rem; color: var(--ink); background: none; border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent); border-radius: 999px; padding: 0.5rem 1.7rem; cursor: pointer; transition: border-color .2s, color .2s, transform .35s cubic-bezier(.3, 1.4, .5, 1); }
+.btn:hover, .btn:focus-visible { border-color: var(--ember); color: var(--ember); }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.sheet { position: fixed; inset: 0; z-index: 8; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--bg) 95%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.sheet-in { width: 100%; max-width: 40rem; padding: 0 clamp(1.5rem, 6vw, 3rem); display: grid; gap: clamp(1.25rem, 4vh, 2rem); }
+.sheet h2 { margin: 0; font-weight: 600; font-size: clamp(2rem, min(8.5vw, 8vh), 3.8rem); line-height: 1; letter-spacing: -0.035em; font-variation-settings: "opsz" 96; }
+.sheet h2 span { display: block; color: var(--ember); font-weight: 300; }
+.field { display: grid; gap: 0.3rem; color: var(--muted); font-size: 0.9rem; }
+.field input { font: inherit; font-size: clamp(1.3rem, 5vw, 1.7rem); font-weight: 300; letter-spacing: -0.01em; color: var(--ink); background: none; border: 0; border-bottom: 1px solid color-mix(in srgb, var(--muted) 45%, transparent); border-radius: 0; padding: 0.35rem 0; outline: none; transition: border-color .2s; }
+.field input:focus { border-bottom-color: var(--ember); }
+.sheet-actions { display: flex; align-items: center; gap: 1.25rem; }
+.link { background: none; border: 0; padding: 0.25rem 0; font: inherit; font-size: 0.9rem; color: var(--muted); cursor: pointer; }
+.link:hover, .link:focus-visible { color: var(--ink); }
+.msg { margin: 0; min-height: 1.2em; color: var(--muted); font-size: 0.85rem; }
+
+/* One screen: everything fits without scrolling */
+main {
+  position: relative; z-index: 1;
+  min-height: 100vh; min-height: 100dvh;
+  max-width: 40rem; margin: 0 auto;
+  padding: clamp(1.5rem, 5vh, 3.5rem) clamp(1.5rem, 6vw, 3rem);
+  display: flex; flex-direction: column; justify-content: space-between; gap: clamp(1.25rem, 3.5vh, 2.5rem);
+}
+
+.presents { margin: 0 0 0.6rem; color: var(--muted); font-size: 0.95rem; }
+h1 {
+  font-weight: 600; font-size: clamp(2.5rem, min(11.5vw, 11vh), 6rem); line-height: 0.98; letter-spacing: -0.035em; margin: 0;
+  font-variation-settings: "opsz" 96; text-transform: none;
+}
+h1 span { display: block; color: var(--ember); font-weight: 300; }
+
+.details { margin: 0; display: grid; gap: clamp(0.5rem, 1.6vh, 0.85rem); }
+.row { display: grid; grid-template-columns: 4.6rem 1fr; gap: 0.75rem; align-items: baseline; }
+.row.theme { align-items: center; }
+.details dt { color: var(--muted); font-size: 0.9rem; }
+.details dd { margin: 0; font-size: clamp(1.05rem, 3.4vw, 1.3rem); letter-spacing: -0.01em; line-height: 1.3; }
+
+/* Fire theme: flame + rocket */
+.row.theme { align-items: center; }
+.fire {
+  display: inline-flex; align-items: center; gap: 0.2rem;
+  background: none; border: 0; padding: 0.15rem 0; margin: 0; cursor: pointer;
+  font: inherit; letter-spacing: inherit; color: inherit; text-transform: inherit;
+}
+.fbox { position: relative; display: block; width: 1.2rem; height: 1.5rem; color: var(--ember); }
+.fbox .icon { position: absolute; left: 50%; bottom: 0.1rem; width: 0.9rem; margin-left: -0.45rem; animation: flicker 3.4s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes flicker {
+  0%, 100% { transform: scale(1, 1) rotate(0); opacity: 0.95; }
+  25% { transform: scale(0.96, 1.05) rotate(-2deg); opacity: 1; }
+  50% { transform: scale(1.03, 0.97) rotate(1.5deg); opacity: 0.85; }
+  75% { transform: scale(0.97, 1.04) rotate(-1deg); opacity: 1; }
+}
+.rocket { position: absolute; left: 50%; bottom: 0.3rem; width: 8px; margin-left: -4px; height: 26px; opacity: 0; pointer-events: none; overflow: visible; z-index: 2; }
+.burst { position: absolute; left: 50%; top: -92px; width: 96px; height: 96px; margin-left: -48px; margin-top: -48px; pointer-events: none; overflow: visible; z-index: 2; }
+.burst * { fill: none; stroke: var(--ember); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.burst .ray { stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
+.burst .blaze { opacity: 0; transform-box: fill-box; transform-origin: 50% 100%; transform: scale(0.2); }
+
+.fire.go .rocket { animation: launch 0.7s cubic-bezier(.4, 0, .9, .6) forwards; }
+.fire.go .ray { animation: spark 0.9s ease-out 0.68s forwards; }
+.fire.go .blaze { animation: blaze 1.2s ease-out 0.72s forwards; }
+@keyframes launch {
+  0% { transform: translateY(0); opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(-98px); opacity: 0; }
+}
+@keyframes spark {
+  0% { stroke-dashoffset: 1; opacity: 1; }
+  60% { stroke-dashoffset: 0; opacity: 0.9; }
+  100% { stroke-dashoffset: -1; opacity: 0; }
+}
+@keyframes blaze {
+  0% { transform: scale(0.2); opacity: 0; }
+  30% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.12); opacity: 0; }
+}
+:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; border-radius: 4px; }
+
+footer { display: grid; gap: clamp(0.9rem, 2.5vh, 1.5rem); }
+#countdown { max-width: 17rem; }
+.count { margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; color: var(--ember); }
+.count .n { font-size: clamp(1.5rem, min(6vw, 5vh), 2rem); font-weight: 300; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; text-shadow: 0 0 22px color-mix(in srgb, var(--ember) 35%, transparent); }
+.count .l { font-size: 0.8rem; color: var(--muted); margin: 0 0.75rem 0 0.2rem; }
+.count .l:last-child { margin-right: 0; }
+.done { margin: 0; font-size: 1.4rem; font-weight: 300; color: var(--ember); }
+.fine { margin: 0; max-width: 29rem; color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
+
+@media (prefers-reduced-motion: reduce) { #fireCanvas { display: none; } .fbox .icon, </style>
+</head>
+<body>
+<div class="warmth" aria-hidden="true"></div>
+<canvas id="fireCanvas" aria-hidden="true"></canvas>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <form class="sheet-in" id="rsvpForm">
+    <p hidden><label>niet invullen <input name="website" tabindex="-1" autocomplete="off"></label></p>
+    <h2 id="sheetTitle">Leuk dat je erbij bent.</h2>
+    <label class="field" id="fieldWrap"><span>Hoe heet je?</span><input id="naam" name="naam" type="text" required maxlength="60" autocomplete="name"></label>
+    <div class="sheet-actions" id="actions">
+      <button class="btn" id="send" type="submit">bevestig</button>
+      <button class="link" id="back" type="button">terug</button>
+    </div>
+    <p class="msg" id="msg" role="status"></p>
+  </form>
+</div>
+
+<button class="sound" id="sound" type="button" aria-pressed="false">geluid uit</button>
+
+<main>
+  <header>
+    <p class="presents">casa di wout &amp; kars presents</p>
+    <h1>VrijMignotBo #1 <span>Housewarming</span></h1>
+  </header>
+
+  <dl class="details">
+    <div class="row"><dt>Wat</dt><dd>Housewarming in vrijmibo stijl</dd></div>
+    <div class="row"><dt>Datum</dt><dd>Vrijdag 4 december</dd></div>
+    <div class="row"><dt>Tijd</dt><dd>17:00</dd></div>
+    <div class="row"><dt>Locatie</dt><dd>Mignot en de Blockplein 17</dd></div>
+    <div class="row theme"><dt>Thema</dt><dd>
+      <button class="fire" id="fire" type="button" aria-label="Vuur, vuurpijl afvuren">
+        <span>Vuur</span>
+        <span class="fbox"><svg class="icon" viewBox="0 0 24 32" fill="currentColor" aria-hidden="true"><path d="M12 0c1 6 8 10 8 19a8 8 0 0 1-16 0c0-4 2-6 3.5-8 .3 2 1.2 3.2 2.5 3.8C9.5 9.500 10.500 4 12 0z"/></svg><svg class="rocket" viewBox="0 0 8 26" aria-hidden="true"><path d="M4 1 L6.5 8 H1.5 Z" fill="currentColor"/><path d="M4 8 V17" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/><path d="M4 19 V25" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".5" fill="none"/></svg><svg class="burst" viewBox="-48 -48 96 96" aria-hidden="true"><g id="rays"></g><path class="blaze" d="M0 -17c1 6 8 10 8 19a8 8 0 0 1-16 0c0-4 2-6 3.5-8 .3 2 1.2 3.2 2.5 3.8C-3 -7.5 -1.5 -13 0 -17z"/></svg></span>
+      </button>
+    </dd></div>
+  </dl>
+
+  <footer>
+    <div id="countdown">
+      <p class="count" aria-label="tijd tot de borrel"><span class="n" id="d">–</span><span class="l">d</span><span class="n" id="h">–</span><span class="l">u</span><span class="n" id="m">–</span><span class="l">m</span><span class="n" id="s">–</span><span class="l">s</span></p>
+    </div>
+    <p class="fine">we have been cooking.. this is the start of something beautiful. let us know if you are planning to be part of the very first VrijMignotBo ever.</p>
+    <div class="rsvp">
+      <button class="btn" id="yes" type="button">ja</button>
+      <button class="btn" id="no" type="button">nee</button>
+    </div>
+  </footer>
+</main>
+
+<script>
+(function () {
+  /* Countdown */
+  var target = new Date(2026, 11, 4, 17, 0, 0).getTime();
+  var box = document.getElementById("countdown");
+  var els = { d: document.getElementById("d"), h: document.getElementById("h"), m: document.getElementById("m"), s: document.getElementById("s") };
+  function pad(n) { return n < 10 ? "0" + n : String(n); }
+  function tick() {
+    var diff = target - Date.now();
+    if (diff <= 0) { box.innerHTML = '<p class="done">Het is zover. Kom maar binnen.</p>'; return false; }
+    var sec = Math.floor(diff / 1000);
+    els.d.textContent = Math.floor(sec / 86400);
+    els.h.textContent = pad(Math.floor(sec % 86400 / 3600));
+    els.m.textContent = pad(Math.floor(sec % 3600 / 60));
+    els.s.textContent = pad(sec % 60);
+    return true;
+  }
+  if (tick()) { var t = setInterval(function () { if (!tick()) clearInterval(t); }, 1000); }
+
+  /* Rays for the burst */
+  var rays = document.getElementById("rays");
+  var NS = "http://www.w3.org/2000/svg";
+  for (var k = 0; k < 10; k++) {
+    var g = document.createElementNS(NS, "g");
+    g.setAttribute("transform", "rotate(" + (k * 36) + ")");
+    var l = document.createElementNS(NS, "line");
+    l.setAttribute("class", "ray");
+    l.setAttribute("x1", 0); l.setAttribute("y1", -24);
+    l.setAttribute("x2", 0); l.setAttribute("y2", -42);
+    l.setAttribute("pathLength", 1);
+    l.style.animationDelay = (0.68 + (k % 2) * 0.05) + "s";
+    g.appendChild(l); rays.appendChild(g);
+  }
+
+  /* Launch the rocket */
+  var fire = document.getElementById("fire");
+  var busy = false;
+  function launch() {
+    if (busy) return;
+    busy = true;
+    fire.classList.add("go");
+    setTimeout(function () { fire.classList.remove("go"); busy = false; }, 2000);
+  }
+  fire.addEventListener("mouseenter", launch);
+  fire.addEventListener("focus", launch);
+  fire.addEventListener("click", launch);
+})();
+</script>
+
+<script>
+/* Fireplace background: flames lean toward the cursor, sparks flee from it, a click flares the fire */
+(function () {
+  var cv = document.getElementById("fireCanvas"), ctx = cv.getContext("2d");
+  var warm = document.querySelector(".warmth");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { cv.style.display = "none"; return; }
+  var dm = matchMedia("(prefers-color-scheme: dark)");
+  function dark() { var t = document.documentElement.getAttribute("data-theme"); return t === "dark" || (t !== "light" && dm.matches); }
+  var W, H, dpr;
+  function size() { dpr = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  size(); addEventListener("resize", size);
+  function sprite(r, g, b) {
+    var c = document.createElement("canvas"); c.width = c.height = 64;
+    var x = c.getContext("2d"), gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, "rgba(" + r + "," + g + "," + b + ",1)"); gr.addColorStop(1, "rgba(" + r + "," + g + "," + b + ",0)");
+    x.fillStyle = gr; x.fillRect(0, 0, 64, 64); return c;
+  }
+  var spr = [sprite(255, 170, 80), sprite(232, 100, 40), sprite(170, 50, 25)];
+  var flames = [], sparks = [], mx = -9999, my = -9999, hasPtr = false, wind = 0, flare = 0, t = 0, lx = 0, ly = 0;
+  function col() { var pad = Math.min(48, Math.max(24, W * 0.06)); return Math.min(640, W) - pad * 2; }
+  function spread() { return col() / 2; }
+  function addFlame() {
+    var u = Math.random() * 2 - 1, life = 70 + Math.random() * 50;
+    var reach = H * (0.15 + Math.random() * 0.08) * (1 + flare * 0.5) * (1 - 0.45 * u * u);
+    flames.push({ x: W / 2 + u * spread(), y: H + 8, vx: (Math.random() - 0.5) * 0.5, vy: -reach / life * 1.6, age: 0, life: life, s: (24 + Math.random() * 26) * Math.min(1, Math.max(0.6, W / 700)) });
+  }
+  function addSpark(x, y, vx, vy, life, s) { sparks.push({ x: x, y: y, vx: vx, vy: vy, age: 0, life: life, s: s, ph: Math.random() * 6.28 }); }
+  function push(p, k) {
+    var dx = p.x - mx, dy = p.y - my, d = Math.sqrt(dx * dx + dy * dy);
+    if (d < 130 && d > 0.1) { var f = (1 - d / 130) * k; p.x += dx / d * f; p.y += dy / d * f; }
+  }
+  function frame() {
+    t++;
+    var target = hasPtr ? Math.max(-1, Math.min(1, (mx - W / 2) / (W / 2))) * 0.9 : Math.sin(t * 0.004) * 0.35;
+    wind += (target - wind) * 0.03; flare *= 0.96;
+    var dk = dark(), i, p, r;
+    ctx.clearRect(0, 0, W, H);
+    if (warm) warm.style.opacity = (0.8 + 0.2 * Math.sin(t * 0.07) * Math.sin(t * 0.031) + flare * 0.4).toFixed(3);
+    ctx.globalCompositeOperation = dk ? "lighter" : "source-over";
+    var a0 = dk ? 0.06 : 0.032, n = flare > 0.2 ? 6 : 3;
+    for (i = 0; i < n; i++) if (flames.length < 280) addFlame();
+    if (Math.random() < 0.22 + flare * 0.6 && sparks.length < 130) addSpark(W / 2 + (Math.random() * 2 - 1) * spread(), H - 10, (Math.random() - 0.5) * 0.6, -(0.7 + Math.random() * 1.4), 220 + Math.random() * 260, 1 + Math.random() * 1.5);
+    for (i = flames.length - 1; i >= 0; i--) {
+      p = flames[i]; p.age++;
+      if (p.age >= p.life) { flames.splice(i, 1); continue; }
+      p.vy *= 0.99; p.x += p.vx + wind * 1.1 + Math.sin(t * 0.04 + p.y * 0.02) * 0.4; p.y += p.vy;
+      if (hasPtr) push(p, 2.2);
+      r = p.age / p.life;
+      var s = p.s * (1 - r * 0.55);
+      ctx.globalAlpha = a0 * (1 - r) * Math.min(1, p.age / 8);
+      ctx.drawImage(spr[r < 0.3 ? 0 : r < 0.65 ? 1 : 2], p.x - s, p.y - s, s * 2, s * 2);
+    }
+    ctx.fillStyle = dk ? "#ffc08a" : "#d4531f";
+    for (i = sparks.length - 1; i >= 0; i--) {
+      p = sparks[i]; p.age++;
+      if (p.age >= p.life || p.y < -20) { sparks.splice(i, 1); continue; }
+      p.vx *= 0.985; p.vy = p.vy * 0.985 - 0.012;
+      p.x += p.vx + wind * 0.5 + Math.sin(t * 0.03 + p.ph) * 0.35; p.y += p.vy;
+      if (hasPtr) push(p, 3.5);
+      r = p.age / p.life;
+      var a = (0.5 + 0.5 * Math.sin(t * 0.2 + p.ph)) * (r < 0.1 ? r * 10 : 1 - r);
+      ctx.globalAlpha = a * 0.35; ctx.drawImage(spr[0], p.x - p.s * 4, p.y - p.s * 4, p.s * 8, p.s * 8);
+      ctx.globalAlpha = a * 0.9; ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, 6.283); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(frame);
+  }
+  addEventListener("pointermove", function (e) {
+    mx = e.clientX; my = e.clientY; hasPtr = true;
+    var dx = mx - lx, dy = my - ly;
+    if (dx * dx + dy * dy > 400) { lx = mx; ly = my; if (sparks.length < 160) addSpark(mx, my, (Math.random() - 0.5) * 0.8, -(0.3 + Math.random() * 0.8), 90 + Math.random() * 60, 1 + Math.random() * 1.2); }
+  });
+  addEventListener("pointerdown", function (e) {
+    mx = e.clientX; my = e.clientY; hasPtr = true; flare = 1;
+    for (var k = 0; k < 36; k++) { var an = Math.random() * 6.28, v = 1 + Math.random() * 3; addSpark(mx, my, Math.cos(an) * v, Math.sin(an) * v - 1, 70 + Math.random() * 90, 1 + Math.random() * 1.6); }
+  });
+  addEventListener("pointerup", function (e) { if (e.pointerType === "touch") { hasPtr = false; mx = my = -9999; } });
+  document.documentElement.addEventListener("mouseleave", function () { hasPtr = false; mx = my = -9999; });
+  requestAnimationFrame(frame);
+})();
+
+/* Optional fireplace sound: only crackles and wood pops, in a small room. No background noise. Off by default. */
+(function () {
+  var btn = document.getElementById("sound"), ac, master, bus, noise, on = false, timer;
+  function setup() {
+    ac = new (window.AudioContext || window.webkitAudioContext)();
+    master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
+    bus = ac.createGain(); bus.connect(master);
+    /* a tiny room: short, quiet reverb so it sounds indoors */
+    var len = Math.floor(ac.sampleRate * 0.35), ir = ac.createBuffer(1, len, ac.sampleRate), d = ir.getChannelData(0);
+    for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3);
+    var conv = ac.createConvolver(); conv.buffer = ir;
+    var wet = ac.createGain(); wet.gain.value = 0.22;
+    bus.connect(conv); conv.connect(wet); wet.connect(master);
+    noise = ac.createBuffer(1, Math.floor(ac.sampleRate * 0.3), ac.sampleRate);
+    var n = noise.getChannelData(0); for (var j = 0; j < n.length; j++) n[j] = Math.random() * 2 - 1;
+  }
+  function tick(at, lo, hi, vol, dur) {
+    var s = ac.createBufferSource(); s.buffer = noise;
+    var f = ac.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = lo + Math.random() * (hi - lo); f.Q.value = 1.5 + Math.random() * 2;
+    var g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, at); g.gain.linearRampToValueAtTime(vol, at + 0.001); g.gain.exponentialRampToValueAtTime(0.001, at + dur);
+    s.connect(f); f.connect(g); g.connect(bus); s.start(at, Math.random() * 0.2, dur + 0.02);
+  }
+  function woodPop(at) {
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(260 + Math.random() * 160, at); o.frequency.exponentialRampToValueAtTime(80, at + 0.08);
+    g.gain.setValueAtTime(0.0001, at); g.gain.linearRampToValueAtTime(0.3, at + 0.003); g.gain.exponentialRampToValueAtTime(0.001, at + 0.11);
+    o.connect(g); g.connect(bus); o.start(at); o.stop(at + 0.13);
+    tick(at, 600, 1600, 0.3, 0.03);
+  }
+  function step() {
+    if (!on) return;
+    var now = ac.currentTime, r = Math.random(), k;
+    if (r < 0.55) { var n = 3 + Math.floor(Math.random() * 6), t0 = now; for (k = 0; k < n; k++) { t0 += 0.01 + Math.random() * 0.04; tick(t0, 1500, 5000, 0.03 + Math.random() * 0.11, 0.004 + Math.random() * 0.012); } }
+    else if (r < 0.85) tick(now, 1200, 4000, 0.08 + Math.random() * 0.14, 0.006 + Math.random() * 0.02);
+    else { woodPop(now); if (Math.random() < 0.5) for (k = 0; k < 3; k++) tick(now + 0.06 + k * 0.03 + Math.random() * 0.02, 1500, 4500, 0.04 + Math.random() * 0.08, 0.008); }
+    timer = setTimeout(step, 120 + Math.random() * Math.random() * 1600);
+  }
+  btn.addEventListener("click", function () {
+    on = !on;
+    if (on) { if (!ac) setup(); ac.resume(); master.gain.setTargetAtTime(0.6, ac.currentTime, 0.2); step(); }
+    else { clearTimeout(timer); if (ac) master.gain.setTargetAtTime(0, ac.currentTime, 0.15); }
+    btn.textContent = on ? "geluid aan" : "geluid uit"; btn.setAttribute("aria-pressed", on);
+  });
+})();
+</script>
+
+
+<script>
+/* RSVP: "ja" opens a name form, "nee" can never be pressed */
+(function () {
+  var API = window.RSVP_API || ""; /* leave empty when server.js serves this page */
+  var yes = document.getElementById("yes"), no = document.getElementById("no"), sheet = document.getElementById("sheet"),
+      form = document.getElementById("rsvpForm"), naam = document.getElementById("naam"), msg = document.getElementById("msg"),
+      send = document.getElementById("send"), title = document.getElementById("sheetTitle"),
+      wrap = document.getElementById("fieldWrap"), actions = document.getElementById("actions"),
+      guarded = [document.querySelector("main"), document.getElementById("sound")];
+
+  function open() { sheet.hidden = false; guarded.forEach(function (el) { if (el) el.inert = true; }); setTimeout(function () { naam.focus(); }, 30); }
+  function close() { sheet.hidden = true; guarded.forEach(function (el) { if (el) el.inert = false; }); yes.focus(); }
+  yes.addEventListener("click", open);
+  document.getElementById("back").addEventListener("click", close);
+  addEventListener("keydown", function (e) { if (e.key === "Escape" && !sheet.hidden) close(); });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = naam.value.trim();
+    if (!name) { naam.focus(); return; }
+    send.disabled = true; msg.textContent = "";
+    fetch(API + "/api/rsvp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ naam: name, website: form.elements["website"].value }) })
+      .then(function (r) {
+        if (!r.ok) throw new Error("save failed");
+        title.textContent = "Tot vrijdag, ";
+        var sp = document.createElement("span"); sp.textContent = name + "."; title.appendChild(sp);
+        wrap.hidden = true;
+        actions.innerHTML = "";
+        var done = document.createElement("button"); done.className = "btn"; done.type = "button"; done.textContent = "sluiten"; done.addEventListener("click", close);
+        actions.appendChild(done);
+        msg.textContent = "vrijdag 4 december, 17:00";
+        yes.textContent = "ja, genoteerd"; yes.disabled = true;
+      })
+      .catch(function () { send.disabled = false; msg.textContent = "opslaan lukte niet. probeer het zo nog eens."; });
+  });
+
+  /* "nee" dodges the cursor and the finger */
+  var ox = 0, oy = 0;
+  function hop(px, py) {
+    var r = no.getBoundingClientRect(), bx = r.left - ox, by = r.top - oy, w = r.width, h = r.height, y = yes.getBoundingClientRect(), m = 16, best = null, bd = -1;
+    for (var i = 0; i < 24; i++) {
+      var nx = Math.min(innerWidth - w - m, Math.max(m, r.left + (Math.random() * 2 - 1) * 240));
+      var ny = Math.min(innerHeight - h - m, Math.max(m, r.top + (Math.random() * 2 - 1) * 160));
+      if (nx < y.right + 12 && nx + w > y.left - 12 && ny < y.bottom + 12 && ny + h > y.top - 12) continue;
+      var d = Math.hypot(nx + w / 2 - px, ny + h / 2 - py);
+      if (d > bd) { bd = d; best = { x: nx, y: ny }; }
+    }
+    if (!best) return;
+    ox = best.x - bx; oy = best.y - by;
+    no.style.transform = "translate(" + ox + "px," + oy + "px)";
+  }
+  no.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") hop(e.clientX, e.clientY); });
+  no.addEventListener("pointerdown", function (e) { e.preventDefault(); hop(e.clientX, e.clientY); });
+  no.addEventListener("click", function (e) { e.preventDefault(); var r = no.getBoundingClientRect(); hop(r.left + r.width / 2, r.top + r.height / 2); });
+  addEventListener("resize", function () { ox = oy = 0; no.style.transform = ""; });
+})();
+</script>
+</body>
+</html>
