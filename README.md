@@ -33,3 +33,18 @@ De data staat in `data/guests.json` (staat in `.gitignore`, dus komt niet in de 
 | `ALLOWED_ORIGIN` | leeg | alleen nodig als de pagina op een ander adres staat dan de server |
 
 Staat `index.html` ergens anders dan de server, zet dan boven het RSVP-script `window.RSVP_API = "https://jouw-server"` en zet `ALLOWED_ORIGIN` op het adres van de pagina.
+
+## Docker
+
+```bash
+docker build -t vrijmignotbo .
+docker run -d -p 3000:3000 -e ADMIN_TOKEN=kies-een-lang-geheim -v vrijmignotbo-data:/data vrijmignotbo
+```
+
+De gastenlijst staat in het volume `vrijmignotbo-data`, dus blijft bewaard als de container opnieuw wordt gemaakt.
+
+Of met Compose (zet `ADMIN_TOKEN=...` in een `.env`-bestand naast `docker-compose.yml`):
+
+```bash
+docker compose up -d --build
+```
