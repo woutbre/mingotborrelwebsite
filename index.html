@@ -71,6 +71,9 @@ body {
 .link { background: none; border: 0; padding: 0.25rem 0; font: inherit; font-size: 0.9rem; color: var(--muted); cursor: pointer; }
 .link:hover, .link:focus-visible { color: var(--ink); }
 .msg { margin: 0; min-height: 1.2em; color: var(--muted); font-size: 0.85rem; }
+.sheet-img { display: block; width: auto; max-width: 100%; max-height: 45vh; max-height: 45dvh; border-radius: 0.75rem; box-shadow: 0 0 40px var(--glow); }
+.sheet-img:not([hidden]) { animation: rise .5s cubic-bezier(.2, .9, .3, 1) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px) scale(.97); } }
 
 /* One screen: everything fits without scrolling */
 main {
@@ -144,7 +147,7 @@ footer { display: grid; gap: clamp(0.9rem, 2.5vh, 1.5rem); }
 .done { margin: 0; font-size: 1.4rem; font-weight: 300; color: var(--ember); }
 .fine { margin: 0; max-width: 29rem; color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
 
-@media (prefers-reduced-motion: reduce) { #fireCanvas { display: none; } .fbox .icon, </style>
+@media (prefers-reduced-motion: reduce) { .sheet-img { animation: none !important; } #fireCanvas { display: none; } .fbox .icon, </style>
 </head>
 <body>
 <div class="warmth" aria-hidden="true"></div>
@@ -153,6 +156,7 @@ footer { display: grid; gap: clamp(0.9rem, 2.5vh, 1.5rem); }
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
   <form class="sheet-in" id="rsvpForm">
     <p hidden><label>niet invullen <input name="website" tabindex="-1" autocomplete="off"></label></p>
+    <img class="sheet-img" id="doneImg" alt="Wout en Kars, met een vlammenwerper en een vuurbal, voor een muur van vuur" width="900" height="1200" hidden>
     <h2 id="sheetTitle">Leuk dat je erbij bent.</h2>
     <label class="field" id="fieldWrap"><span>Hoe heet je?</span><input id="naam" name="naam" type="text" required maxlength="60" autocomplete="name"></label>
     <div class="sheet-actions" id="actions">
@@ -381,10 +385,10 @@ footer { display: grid; gap: clamp(0.9rem, 2.5vh, 1.5rem); }
   var yes = document.getElementById("yes"), no = document.getElementById("no"), sheet = document.getElementById("sheet"),
       form = document.getElementById("rsvpForm"), naam = document.getElementById("naam"), msg = document.getElementById("msg"),
       send = document.getElementById("send"), title = document.getElementById("sheetTitle"),
-      wrap = document.getElementById("fieldWrap"), actions = document.getElementById("actions"),
+      wrap = document.getElementById("fieldWrap"), actions = document.getElementById("actions"), img = document.getElementById("doneImg"),
       guarded = [document.querySelector("main"), document.getElementById("sound")];
 
-  function open() { sheet.hidden = false; guarded.forEach(function (el) { if (el) el.inert = true; }); setTimeout(function () { naam.focus(); }, 30); }
+  function open() { if (!img.src) img.src = API + "/vuur.jpg"; sheet.hidden = false; guarded.forEach(function (el) { if (el) el.inert = true; }); setTimeout(function () { naam.focus(); }, 30); }
   function close() { sheet.hidden = true; guarded.forEach(function (el) { if (el) el.inert = false; }); yes.focus(); }
   yes.addEventListener("click", open);
   document.getElementById("back").addEventListener("click", close);
@@ -400,7 +404,7 @@ footer { display: grid; gap: clamp(0.9rem, 2.5vh, 1.5rem); }
         if (!r.ok) throw new Error("save failed");
         title.textContent = "Tot vrijdag, ";
         var sp = document.createElement("span"); sp.textContent = name + "."; title.appendChild(sp);
-        wrap.hidden = true;
+        wrap.hidden = true; img.hidden = false;
         actions.innerHTML = "";
         var done = document.createElement("button"); done.className = "btn"; done.type = "button"; done.textContent = "sluiten"; done.addEventListener("click", close);
         actions.appendChild(done);

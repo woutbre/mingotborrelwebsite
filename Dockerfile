@@ -5,7 +5,7 @@ ENV NODE_ENV=production \
     DATA_DIR=/data
 
 WORKDIR /app
-COPY package.json server.js index.html ./
+COPY package.json server.js index.html vuur.jpg ./
 
 RUN mkdir -p /data && chown node:node /data
 USER node

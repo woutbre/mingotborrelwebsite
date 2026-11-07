@@ -62,6 +62,11 @@ http.createServer(async (req, res) => {
     if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html"))
       return send(200, fs.readFileSync(path.join(__dirname, "index.html")), "text/html");
 
+    if (req.method === "GET" && url.pathname === "/vuur.jpg") {
+      res.writeHead(200, { "Content-Type": "image/jpeg", "Cache-Control": "public, max-age=86400" });
+      return res.end(fs.readFileSync(path.join(__dirname, "vuur.jpg")));
+    }
+
     if (req.method === "POST" && url.pathname === "/api/rsvp") {
       const ip = (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").split(",")[0].trim();
       if (limited(ip)) return send(429, '{"ok":false}');
